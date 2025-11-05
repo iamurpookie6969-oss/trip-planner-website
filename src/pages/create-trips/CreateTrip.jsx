@@ -36,7 +36,6 @@ export const CreateTrip = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // handle form updates
   const handleInputChange = (name, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -44,17 +43,11 @@ export const CreateTrip = () => {
     }));
   };
 
-  useEffect(() => {
-    console.log("Form Data:", formData);
-  }, [formData]);
-
-  // Google login setup
   const handleLogin = useGoogleLogin({
     onSuccess: (response) => GetUserProfile(response),
     onError: (error) => console.error("Google login error:", error),
   });
 
-  // main function to generate trip plan
   const generateTrip = async () => {
     const user = localStorage.getItem("user");
     if (!user) {
@@ -62,12 +55,14 @@ export const CreateTrip = () => {
       return;
     }
 
-    // validations
-    if (!formData.location) return toast("Destination is required.");
+    if (!formData.location)
+      return toast("Destination is required.");
     if (!formData.noOfDays || formData.noOfDays <= 0 || formData.noOfDays > 5)
       return toast("Number of days should be between 1 and 5.");
-    if (!formData.budget) return toast("Budget selection is required.");
-    if (!formData.traveller) return toast("Traveller details are required.");
+    if (!formData.budget)
+      return toast("Budget selection is required.");
+    if (!formData.traveller)
+      return toast("Traveller details are required.");
 
     setLoading(true);
 
@@ -80,10 +75,9 @@ export const CreateTrip = () => {
       .replace("{budget}", formData?.budget);
 
     try {
-      console.log("FINAL PROMPT:", FINAL_PROMPT);
       const result = await chatSession.sendMessage(FINAL_PROMPT);
-      console.log("AI Result:", result);
       const aiResponse = result?.response?.text();
+      console.log("Gemini Raw Output:", aiResponse);
       saveTrip(aiResponse);
     } catch (error) {
       console.error("Error generating trip:", error);
@@ -92,36 +86,38 @@ export const CreateTrip = () => {
     }
   };
 
-  // save the generated trip to Firestore
   const saveTrip = async (tripData) => {
     setLoading(true);
     const docId = Date.now().toString();
     const user = JSON.parse(localStorage.getItem("user"));
 
-    let parsedTripData;
+    let parsedTripData = { hotels: [], plans: [] };
+
     try {
       parsedTripData = JSON.parse(tripData);
-
-      // if AI returned a 2D array [hotels, plans]
       if (Array.isArray(parsedTripData) && Array.isArray(parsedTripData[0])) {
         parsedTripData = {
           hotels: parsedTripData[0],
           plans: parsedTripData[1],
         };
       }
-
-      // fallback safety if AI output is malformed
-      if (!parsedTripData.hotels && !parsedTripData.plans) {
-        parsedTripData = {
-          hotels: [],
-          plans: [],
-        };
-      }
     } catch (error) {
-      console.error("Error parsing tripData:", error, tripData);
-      toast("AI returned invalid data. Please try again.");
-      setLoading(false);
-      return;
+      console.warn("AI output not JSON. Using fallback parser.");
+
+      const hotels = tripData
+        ?.split(/hotels?:/i)[1]
+        ?.split(/plans?:|itinerary:/i)[0]
+        ?.split("\n")
+        .filter((l) => l.trim() && !l.toLowerCase().includes("hotel"))
+        .map((h) => h.replace(/^\d+[\.\-\)]\s*/, "").trim()) || [];
+
+      const plans = tripData
+        ?.split(/plans?:|itinerary:/i)[1]
+        ?.split("\n")
+        .filter((l) => l.trim())
+        .map((p) => p.replace(/^\d+[\.\-\)]\s*/, "").trim()) || [];
+
+      parsedTripData = { hotels, plans };
     }
 
     try {
@@ -143,7 +139,6 @@ export const CreateTrip = () => {
     }
   };
 
-  // Google OAuth fetch user profile
   const GetUserProfile = (tokenInfo) => {
     axios
       .get(
@@ -178,7 +173,6 @@ export const CreateTrip = () => {
           generate a customized itinerary based on your preferences.
         </p>
 
-        {/* Location */}
         <div className="mt-10 flex flex-col gap-10">
           <div>
             <h2 className="text-xl my-3 font-medium">
@@ -196,10 +190,9 @@ export const CreateTrip = () => {
             />
           </div>
 
-          {/* Days */}
           <div>
             <h2 className="text-xl my-3 font-medium">
-              How many days are you planning for your trip? *
+              How many days are you planning your trip? *
             </h2>
             <Input
               placeholder="Ex. 3"
@@ -212,19 +205,17 @@ export const CreateTrip = () => {
           </div>
         </div>
 
-        {/* Budget */}
         <div>
           <h2 className="text-xl my-3 font-medium">What is your budget? *</h2>
           <div className="grid grid-cols-3 gap-5 mt-5">
             {selectBudgetOptions.map((item, index) => (
               <div
                 key={index}
-                className={`p-4 border cursor-pointer rounded-lg hover:shadow-lg transition-all
-                  ${
-                    formData?.budget === item.title
-                      ? "shadow-lg border-black"
-                      : ""
-                  }`}
+                className={`p-4 border cursor-pointer rounded-lg hover:shadow-lg transition-all ${
+                  formData?.budget === item.title
+                    ? "shadow-lg border-black"
+                    : ""
+                }`}
                 onClick={() => handleInputChange("budget", item.title)}
               >
                 <h2 className="text-4xl">{item.icon}</h2>
@@ -235,7 +226,6 @@ export const CreateTrip = () => {
           </div>
         </div>
 
-        {/* Traveller */}
         <div>
           <h2 className="text-xl my-3 font-medium">
             Who are you travelling with? *
@@ -244,12 +234,11 @@ export const CreateTrip = () => {
             {SelectTravelsList.map((item, index) => (
               <div
                 key={index}
-                className={`p-4 border cursor-pointer rounded-lg hover:shadow-lg transition-all
-                  ${
-                    formData?.traveller === item.people
-                      ? "shadow-lg border-black"
-                      : ""
-                  }`}
+                className={`p-4 border cursor-pointer rounded-lg hover:shadow-lg transition-all ${
+                  formData?.traveller === item.people
+                    ? "shadow-lg border-black"
+                    : ""
+                }`}
                 onClick={() => handleInputChange("traveller", item.people)}
               >
                 <h2 className="text-4xl">{item.icon}</h2>
@@ -260,7 +249,6 @@ export const CreateTrip = () => {
           </div>
         </div>
 
-        {/* Generate Button */}
         <div className="my-10 flex justify-center">
           <Button onClick={generateTrip} disabled={loading}>
             {loading ? (
@@ -273,7 +261,6 @@ export const CreateTrip = () => {
           </Button>
         </div>
 
-        {/* Google Login Dialog */}
         <Dialog open={openDialog}>
           <DialogContent>
             <DialogHeader>
