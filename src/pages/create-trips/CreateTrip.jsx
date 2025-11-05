@@ -90,8 +90,7 @@ const getPlacePhoto = async (place) => {
 
     try {
       // ✅ Fetch the place photo before generating
-      const photoUrl = await getPlacePhoto(formData?.location?.value?.place_id);
-
+      const photoUrl = await getPlacePhoto(formData?.location);
       // 🧠 Smart Prompt
       const FINAL_PROMPT = `
         You are a travel planner AI.
