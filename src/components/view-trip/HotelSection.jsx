@@ -1,14 +1,22 @@
 import React from "react";
 
-export const HotelSection = ({ hotels }) => {
-  if (!Array.isArray(hotels) || hotels.length === 0) return null;
+export const HotelSection = ({ trip }) => {
+  if (!trip?.hotels || trip.hotels.length === 0)
+    return (
+      <div className="mt-10 text-gray-500 text-center">
+        No hotel recommendations found.
+      </div>
+    );
 
   return (
     <div className="mt-10">
-      <h2 className="font-bold text-2xl mb-3">🏨 Hotel Recommendations</h2>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {hotels.map((hotel, i) => (
-          <div key={i} className="p-4 border rounded-lg shadow-sm">
+      <h2 className="text-2xl font-bold mb-4">🏨 Hotel Recommendations</h2>
+      <div className="grid md:grid-cols-3 gap-5">
+        {trip.hotels.map((hotel, index) => (
+          <div
+            key={index}
+            className="border p-4 rounded-lg shadow-sm hover:shadow-md transition"
+          >
             <h3 className="font-semibold text-lg">{hotel}</h3>
           </div>
         ))}
@@ -16,4 +24,5 @@ export const HotelSection = ({ hotels }) => {
     </div>
   );
 };
+
 
