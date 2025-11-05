@@ -15,7 +15,7 @@ The Trip Planner Website is a web application designed to assist users in planni
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/hrshrayank/trip-planner-website.git
+   git clone https://github.com/iamurpookie6969-oss/trip-planner-website.git
    ```
 2. **Install dependencies**:
    ```bash
