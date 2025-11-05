@@ -14,10 +14,12 @@ export const ViewTrip = () => {
   const [tripData, setTripData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // ✅ Fetch trip data from Firestore
   const getTripData = async () => {
     try {
       const docRef = doc(db, "trips", tripId);
       const docSnap = await getDoc(docRef);
+
       if (docSnap.exists()) {
         setTripData(docSnap.data());
       } else {
@@ -35,33 +37,48 @@ export const ViewTrip = () => {
     getTripData();
   }, [tripId]);
 
-  if (loading) return <p className="text-center mt-10">Loading trip...</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-[60vh] text-lg text-gray-500">
+        Loading trip details...
+      </div>
+    );
 
   if (!tripData)
-    return <p className="text-center mt-10">No trip found.</p>;
+    return (
+      <div className="flex justify-center items-center h-[60vh] text-lg text-gray-500">
+        No trip found.
+      </div>
+    );
+
+  const { userSelection, tripData: tripDetails, locationPhoto } = tripData;
 
   return (
     <div>
       <Navbar />
-      <div className="p-6 md:px-20 lg:px-44 xl:px-56">
-  {trip?.locationPhoto ? (
-    <img
-      src={trip.locationPhoto}
-      alt={trip?.userSelection?.location?.label || "Destination"}
-      className="w-full h-[300px] object-cover rounded-xl shadow-md"
-    />
-  ) : (
-    <div className="w-full h-[300px] bg-gray-200 rounded-xl flex items-center justify-center text-gray-400">
-      No Image Available
-    </div>
-  )}
-</div>
 
-      <div className="p-10 md:px-20 lg:px-44 xl:px-56">
-        <InfoSection trip={tripData.userSelection} />
-        <HotelSection hotels={tripData.tripData.hotels} />
-        <VisitSection plans={tripData.tripData.plans} />
+      {/* 🖼️ Destination Banner */}
+      <div className="p-6 md:px-20 lg:px-44 xl:px-56">
+        {locationPhoto ? (
+          <img
+            src={locationPhoto}
+            alt={userSelection?.location?.label || "Destination"}
+            className="w-full h-[300px] object-cover rounded-xl shadow-md"
+          />
+        ) : (
+          <div className="w-full h-[300px] bg-gray-200 rounded-xl flex items-center justify-center text-gray-400">
+            No Image Available
+          </div>
+        )}
       </div>
+
+      {/* 📍 Trip Info Sections */}
+      <div className="p-10 md:px-20 lg:px-44 xl:px-56 space-y-10">
+        <InfoSection trip={userSelection} />
+        <HotelSection trip={tripDetails} />
+        <VisitSection trip={tripDetails} />
+      </div>
+
       <Footer />
     </div>
   );
