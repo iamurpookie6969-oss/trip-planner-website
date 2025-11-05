@@ -36,22 +36,26 @@ export const CreateTrip = () => {
   const [loading, setLoading] = useState(false);
 
   // ✅ Helper: Fetch Google Place Photo
-  const getPlacePhoto = async (placeId) => {
-    try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${import.meta.env.VITE_GOOGLE_PLACE_API_KEY}`
-      );
-      const data = await response.json();
+  // ✅ Works with GooglePlacesAutocomplete object directly
+const getPlacePhoto = async (place) => {
+  try {
+    // Extract photo reference directly from the selected place
+    const photoRef = place?.value?.photos?.[0]?.photo_reference;
 
-      const photoRef = data?.result?.photos?.[0]?.photo_reference;
-      if (photoRef) {
-        return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=1600&photoreference=${photoRef}&key=${import.meta.env.VITE_GOOGLE_PLACE_API_KEY}`;
-      }
-    } catch (err) {
-      console.error("Error fetching place photo:", err);
+    if (photoRef) {
+      // Build image URL
+      return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=1600&photoreference=${photoRef}&key=${import.meta.env.VITE_GOOGLE_PLACE_API_KEY}`;
     }
-    return "/placeholder.jpg"; // fallback image
-  };
+
+    // Fallback: use static map if no photo is available
+    const locationName = encodeURIComponent(place?.label || "travel");
+    return `https://source.unsplash.com/1600x900/?${locationName}`;
+  } catch (err) {
+    console.error("Error generating photo URL:", err);
+    return "/placeholder.jpg";
+  }
+};
+
 
   const handleInputChange = (name, value) => {
     setFormData((prev) => ({
