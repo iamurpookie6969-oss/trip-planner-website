@@ -48,6 +48,7 @@ export const CreateTrip = () => {
     onError: (error) => console.error("Google login error:", error),
   });
 
+  // 🚀 Generate Trip using Gemini API
   const generateTrip = async () => {
     const user = localStorage.getItem("user");
     if (!user) {
@@ -66,18 +67,24 @@ export const CreateTrip = () => {
 
     setLoading(true);
 
-    const FINAL_PROMPT = AI_PROMPT.replace(
-      "{location}",
-      formData?.location?.label
-    )
-      .replaceAll("{totalDays}", formData?.noOfDays)
-      .replace("{traveler}", formData?.traveller)
-      .replace("{budget}", formData?.budget);
+    // 🧠 Smarter prompt for Gemini
+    const FINAL_PROMPT = `
+      You are a travel planner AI.
+      Create a ${formData?.noOfDays}-day travel itinerary for ${formData?.location?.label}.
+      Traveller: ${formData?.traveller}.
+      Budget: ${formData?.budget}.
+      
+      Please respond strictly in JSON format:
+      {
+        "hotels": ["Hotel name 1", "Hotel name 2", "Hotel name 3"],
+        "plans": ["Day 1 plan...", "Day 2 plan...", "Day 3 plan..."]
+      }
+    `;
 
     try {
       const result = await chatSession.sendMessage(FINAL_PROMPT);
       const aiResponse = result?.response?.text();
-      console.log("Gemini Raw Output:", aiResponse);
+      console.log("🧠 Gemini Raw Output:", aiResponse);
       saveTrip(aiResponse);
     } catch (error) {
       console.error("Error generating trip:", error);
@@ -86,6 +93,7 @@ export const CreateTrip = () => {
     }
   };
 
+  // 💾 Save AI-generated trip to Firebase
   const saveTrip = async (tripData) => {
     setLoading(true);
     const docId = Date.now().toString();
@@ -94,6 +102,7 @@ export const CreateTrip = () => {
     let parsedTripData = { hotels: [], plans: [] };
 
     try {
+      // Try JSON parsing first
       parsedTripData = JSON.parse(tripData);
       if (Array.isArray(parsedTripData) && Array.isArray(parsedTripData[0])) {
         parsedTripData = {
@@ -102,20 +111,29 @@ export const CreateTrip = () => {
         };
       }
     } catch (error) {
-      console.warn("AI output not JSON. Using fallback parser.");
+      console.warn("⚠️ AI output not JSON. Using fallback parser.");
 
-      const hotels = tripData
-        ?.split(/hotels?:/i)[1]
-        ?.split(/plans?:|itinerary:/i)[0]
-        ?.split("\n")
-        .filter((l) => l.trim() && !l.toLowerCase().includes("hotel"))
-        .map((h) => h.replace(/^\d+[\.\-\)]\s*/, "").trim()) || [];
+      // Fallback plain text parsing
+      const lines = tripData.split("\n").map((l) => l.trim()).filter(Boolean);
 
-      const plans = tripData
-        ?.split(/plans?:|itinerary:/i)[1]
-        ?.split("\n")
-        .filter((l) => l.trim())
-        .map((p) => p.replace(/^\d+[\.\-\)]\s*/, "").trim()) || [];
+      const hotels = [];
+      const plans = [];
+
+      lines.forEach((line) => {
+        if (
+          line.toLowerCase().includes("hotel") ||
+          line.toLowerCase().includes("resort") ||
+          line.toLowerCase().includes("stay")
+        ) {
+          hotels.push(line.replace(/^\d+[\.\-\)]\s*/, "").trim());
+        } else if (
+          line.toLowerCase().includes("day") ||
+          line.toLowerCase().includes("visit") ||
+          line.toLowerCase().includes("explore")
+        ) {
+          plans.push(line.replace(/^\d+[\.\-\)]\s*/, "").trim());
+        }
+      });
 
       parsedTripData = { hotels, plans };
     }
@@ -129,11 +147,11 @@ export const CreateTrip = () => {
         createdAt: new Date().toISOString(),
       });
 
-      toast("Trip successfully created!");
+      toast.success("Trip successfully created!");
       navigate(`/view-trip/${docId}`);
     } catch (error) {
       console.error("Error saving trip:", error);
-      toast("An error occurred while saving the trip.");
+      toast.error("An error occurred while saving the trip.");
     } finally {
       setLoading(false);
     }
@@ -161,6 +179,7 @@ export const CreateTrip = () => {
       });
   };
 
+  // 🧱 UI Section
   return (
     <>
       <Navbar />
@@ -174,6 +193,7 @@ export const CreateTrip = () => {
         </p>
 
         <div className="mt-10 flex flex-col gap-10">
+          {/* Location Input */}
           <div>
             <h2 className="text-xl my-3 font-medium">
               What is your destination of choice? *
@@ -190,6 +210,7 @@ export const CreateTrip = () => {
             />
           </div>
 
+          {/* Number of Days */}
           <div>
             <h2 className="text-xl my-3 font-medium">
               How many days are you planning your trip? *
@@ -205,6 +226,7 @@ export const CreateTrip = () => {
           </div>
         </div>
 
+        {/* Budget Selection */}
         <div>
           <h2 className="text-xl my-3 font-medium">What is your budget? *</h2>
           <div className="grid grid-cols-3 gap-5 mt-5">
@@ -226,6 +248,7 @@ export const CreateTrip = () => {
           </div>
         </div>
 
+        {/* Traveller Selection */}
         <div>
           <h2 className="text-xl my-3 font-medium">
             Who are you travelling with? *
@@ -249,6 +272,7 @@ export const CreateTrip = () => {
           </div>
         </div>
 
+        {/* Generate Trip Button */}
         <div className="my-10 flex justify-center">
           <Button onClick={generateTrip} disabled={loading}>
             {loading ? (
@@ -261,6 +285,7 @@ export const CreateTrip = () => {
           </Button>
         </div>
 
+        {/* Google Login Dialog */}
         <Dialog open={openDialog}>
           <DialogContent>
             <DialogHeader>
