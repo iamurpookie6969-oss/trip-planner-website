@@ -90,18 +90,26 @@ export const CreateTrip = () => {
       const photoUrl = await getPlacePhoto(formData?.location?.value?.place_id);
 
       // 🧠 Smart Prompt
-      const FINAL_PROMPT = `
-        You are a travel planner AI.
-        Create a ${formData?.noOfDays}-day travel itinerary for ${formData?.location?.label}.
-        Traveller: ${formData?.traveller}.
-        Budget: ${formData?.budget}.
-        
-        Please respond strictly in JSON format:
-        {
-          "hotels": ["Hotel name 1", "Hotel name 2", "Hotel name 3"],
-          "plans": ["Day 1 plan...", "Day 2 plan...", "Day 3 plan..."]
-        }
-      `;
+      // Get Google photo before generating
+const photoUrl = await getPlacePhoto(formData?.location?.value?.place_id);
+
+const FINAL_PROMPT = `
+  You are a travel planner AI.
+  Create a ${formData?.noOfDays}-day itinerary for ${formData?.location?.label}.
+  Traveller: ${formData?.traveller}.
+  Budget: ${formData?.budget}.
+  
+  Please respond strictly in JSON format:
+  {
+    "hotels": ["Hotel 1", "Hotel 2", "Hotel 3"],
+    "plans": ["Day 1 plan...", "Day 2 plan...", "Day 3 plan..."]
+  }
+`;
+
+const result = await chatSession.sendMessage(FINAL_PROMPT);
+const aiResponse = result?.response?.text();
+saveTrip(aiResponse, photoUrl);
+
 
       const result = await chatSession.sendMessage(FINAL_PROMPT);
       const aiResponse = result?.response?.text();
