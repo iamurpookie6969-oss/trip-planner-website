@@ -2,12 +2,11 @@ import { Navbar } from "@/components/common/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  AI_PROMPT,
   selectBudgetOptions,
   SelectTravelsList,
 } from "@/constants/options";
 import { chatSession } from "@/service/AIModal";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { toast } from "sonner";
 import {
@@ -90,34 +89,29 @@ export const CreateTrip = () => {
       const photoUrl = await getPlacePhoto(formData?.location?.value?.place_id);
 
       // 🧠 Smart Prompt
-      // Get Google photo before generating
-const photoUrl = await getPlacePhoto(formData?.location?.value?.place_id);
+      const FINAL_PROMPT = `
+        You are a travel planner AI.
+        Create a ${formData?.noOfDays}-day itinerary for ${formData?.location?.label}.
+        Traveller: ${formData?.traveller}.
+        Budget: ${formData?.budget}.
+        
+        Please respond strictly in JSON format:
+        {
+          "hotels": ["Hotel 1", "Hotel 2", "Hotel 3"],
+          "plans": ["Day 1 plan...", "Day 2 plan...", "Day 3 plan..."]
+        }
+      `;
 
-const FINAL_PROMPT = `
-  You are a travel planner AI.
-  Create a ${formData?.noOfDays}-day itinerary for ${formData?.location?.label}.
-  Traveller: ${formData?.traveller}.
-  Budget: ${formData?.budget}.
-  
-  Please respond strictly in JSON format:
-  {
-    "hotels": ["Hotel 1", "Hotel 2", "Hotel 3"],
-    "plans": ["Day 1 plan...", "Day 2 plan...", "Day 3 plan..."]
-  }
-`;
-
-const result = await chatSession.sendMessage(FINAL_PROMPT);
-const aiResponse = result?.response?.text();
-saveTrip(aiResponse, photoUrl);
-
-
+      // ✅ Send prompt to Gemini once
       const result = await chatSession.sendMessage(FINAL_PROMPT);
       const aiResponse = result?.response?.text();
       console.log("🧠 Gemini Raw Output:", aiResponse);
-      saveTrip(aiResponse, photoUrl);
+
+      await saveTrip(aiResponse, photoUrl);
     } catch (error) {
       console.error("Error generating trip:", error);
       toast("An error occurred while generating your trip.");
+    } finally {
       setLoading(false);
     }
   };
@@ -131,7 +125,6 @@ saveTrip(aiResponse, photoUrl);
     let parsedTripData = { hotels: [], plans: [] };
 
     try {
-      // Try JSON parsing first
       parsedTripData = JSON.parse(tripData);
       if (Array.isArray(parsedTripData) && Array.isArray(parsedTripData[0])) {
         parsedTripData = {
@@ -142,9 +135,7 @@ saveTrip(aiResponse, photoUrl);
     } catch (error) {
       console.warn("⚠️ AI output not JSON. Using fallback parser.");
 
-      // Fallback plain text parsing
       const lines = tripData.split("\n").map((l) => l.trim()).filter(Boolean);
-
       const hotels = [];
       const plans = [];
 
@@ -171,7 +162,7 @@ saveTrip(aiResponse, photoUrl);
       await setDoc(doc(db, "trips", docId), {
         userSelection: formData,
         tripData: parsedTripData,
-        locationPhoto: photoUrl, // ✅ Added here
+        locationPhoto: photoUrl, // ✅ store image here
         userEmail: user?.email,
         id: docId,
         createdAt: new Date().toISOString(),
