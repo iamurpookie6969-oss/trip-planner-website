@@ -43,6 +43,20 @@ export const ViewTrip = () => {
   return (
     <div>
       <Navbar />
+      <div className="p-6 md:px-20 lg:px-44 xl:px-56">
+  {trip?.locationPhoto ? (
+    <img
+      src={trip.locationPhoto}
+      alt={trip?.userSelection?.location?.label || "Destination"}
+      className="w-full h-[300px] object-cover rounded-xl shadow-md"
+    />
+  ) : (
+    <div className="w-full h-[300px] bg-gray-200 rounded-xl flex items-center justify-center text-gray-400">
+      No Image Available
+    </div>
+  )}
+</div>
+
       <div className="p-10 md:px-20 lg:px-44 xl:px-56">
         <InfoSection trip={tripData.userSelection} />
         <HotelSection hotels={tripData.tripData.hotels} />
