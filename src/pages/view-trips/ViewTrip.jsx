@@ -18,12 +18,9 @@ export const ViewTrip = () => {
     try {
       const docRef = doc(db, "trips", tripId);
       const docSnap = await getDoc(docRef);
-
       if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
         setTripData(docSnap.data());
       } else {
-        console.log("No such document!");
         toast.error("No Trip Found");
       }
     } catch (error) {
@@ -38,43 +35,20 @@ export const ViewTrip = () => {
     getTripData();
   }, [tripId]);
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <Navbar />
-        <p className="text-lg text-gray-600 mt-10">Loading trip details...</p>
-      </div>
-    );
-  }
+  if (loading) return <p className="text-center mt-10">Loading trip...</p>;
 
-  if (!tripData) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <Navbar />
-        <p className="text-lg text-gray-600 mt-10">No trip found.</p>
-      </div>
-    );
-  }
+  if (!tripData)
+    return <p className="text-center mt-10">No trip found.</p>;
 
   return (
     <div>
       <Navbar />
       <div className="p-10 md:px-20 lg:px-44 xl:px-56">
-        {/* Information Section */}
-        <InfoSection trip={tripData} />
-
-        {/* Hotels Section */}
-        {tripData?.tripData?.hotels && Array.isArray(tripData.tripData.hotels) && (
-          <HotelSection trip={tripData} />
-        )}
-
-        {/* Visit / Daily Plan Section */}
-        {tripData?.tripData?.plans && Array.isArray(tripData.tripData.plans) && (
-          <VisitSection trip={tripData} />
-        )}
+        <InfoSection trip={tripData.userSelection} />
+        <HotelSection hotels={tripData.tripData.hotels} />
+        <VisitSection plans={tripData.tripData.plans} />
       </div>
       <Footer />
     </div>
   );
 };
-
