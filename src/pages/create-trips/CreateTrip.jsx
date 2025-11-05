@@ -36,6 +36,24 @@ export const CreateTrip = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // ✅ Helper: Fetch Google Place Photo
+  const getPlacePhoto = async (placeId) => {
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${import.meta.env.VITE_GOOGLE_PLACE_API_KEY}`
+      );
+      const data = await response.json();
+
+      const photoRef = data?.result?.photos?.[0]?.photo_reference;
+      if (photoRef) {
+        return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=1600&photoreference=${photoRef}&key=${import.meta.env.VITE_GOOGLE_PLACE_API_KEY}`;
+      }
+    } catch (err) {
+      console.error("Error fetching place photo:", err);
+    }
+    return "/placeholder.jpg"; // fallback image
+  };
+
   const handleInputChange = (name, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -67,25 +85,28 @@ export const CreateTrip = () => {
 
     setLoading(true);
 
-    // 🧠 Smarter prompt for Gemini
-    const FINAL_PROMPT = `
-      You are a travel planner AI.
-      Create a ${formData?.noOfDays}-day travel itinerary for ${formData?.location?.label}.
-      Traveller: ${formData?.traveller}.
-      Budget: ${formData?.budget}.
-      
-      Please respond strictly in JSON format:
-      {
-        "hotels": ["Hotel name 1", "Hotel name 2", "Hotel name 3"],
-        "plans": ["Day 1 plan...", "Day 2 plan...", "Day 3 plan..."]
-      }
-    `;
-
     try {
+      // ✅ Fetch the place photo before generating
+      const photoUrl = await getPlacePhoto(formData?.location?.value?.place_id);
+
+      // 🧠 Smart Prompt
+      const FINAL_PROMPT = `
+        You are a travel planner AI.
+        Create a ${formData?.noOfDays}-day travel itinerary for ${formData?.location?.label}.
+        Traveller: ${formData?.traveller}.
+        Budget: ${formData?.budget}.
+        
+        Please respond strictly in JSON format:
+        {
+          "hotels": ["Hotel name 1", "Hotel name 2", "Hotel name 3"],
+          "plans": ["Day 1 plan...", "Day 2 plan...", "Day 3 plan..."]
+        }
+      `;
+
       const result = await chatSession.sendMessage(FINAL_PROMPT);
       const aiResponse = result?.response?.text();
       console.log("🧠 Gemini Raw Output:", aiResponse);
-      saveTrip(aiResponse);
+      saveTrip(aiResponse, photoUrl);
     } catch (error) {
       console.error("Error generating trip:", error);
       toast("An error occurred while generating your trip.");
@@ -94,7 +115,7 @@ export const CreateTrip = () => {
   };
 
   // 💾 Save AI-generated trip to Firebase
-  const saveTrip = async (tripData) => {
+  const saveTrip = async (tripData, photoUrl) => {
     setLoading(true);
     const docId = Date.now().toString();
     const user = JSON.parse(localStorage.getItem("user"));
@@ -142,6 +163,7 @@ export const CreateTrip = () => {
       await setDoc(doc(db, "trips", docId), {
         userSelection: formData,
         tripData: parsedTripData,
+        locationPhoto: photoUrl, // ✅ Added here
         userEmail: user?.email,
         id: docId,
         createdAt: new Date().toISOString(),
