@@ -1,19 +1,28 @@
 import React from "react";
 
-export const VisitSection = ({ plans }) => {
-  if (!Array.isArray(plans) || plans.length === 0) return null;
+export const VisitSection = ({ trip }) => {
+  if (!trip?.plans || trip.plans.length === 0)
+    return (
+      <div className="mt-10 text-gray-500 text-center">
+        No itinerary found.
+      </div>
+    );
 
   return (
     <div className="mt-10">
-      <h2 className="font-bold text-2xl mb-3">📍 Places to Visit</h2>
+      <h2 className="text-2xl font-bold mb-4">📍 Places to Visit</h2>
       <div className="space-y-4">
-        {plans.map((plan, i) => (
-          <div key={i} className="p-4 border rounded-lg shadow-sm">
-            <h3 className="font-semibold text-lg">Day {i + 1}</h3>
-            <p className="text-gray-600 mt-1">{plan}</p>
+        {trip.plans.map((plan, index) => (
+          <div
+            key={index}
+            className="border p-4 rounded-lg shadow-sm hover:shadow-md transition"
+          >
+            <h3 className="font-semibold mb-1">Day {index + 1}</h3>
+            <p className="text-gray-600 text-sm leading-relaxed">{plan}</p>
           </div>
         ))}
       </div>
     </div>
   );
 };
+
