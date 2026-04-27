@@ -1,3 +1,3 @@
 export default function Landing() {
-  return <h1>Landing Working ✅</h1>;
+  return <h1 style={{textAlign: "center"}}>Landing Works ✅</h1>;
 }
