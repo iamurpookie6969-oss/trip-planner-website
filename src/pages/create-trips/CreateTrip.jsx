@@ -1,3 +1,4 @@
+import ChatBot from "@/components/ChatBot";
 import { Navbar } from "@/components/common/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -333,5 +334,6 @@ const getPlacePhoto = async (place) => {
         </Dialog>
       </div>
     </>
+    <ChatBot />
   );
 };
