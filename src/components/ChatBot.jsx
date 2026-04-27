@@ -1,0 +1,86 @@
+import React, { useState } from "react";
+
+const ChatBot = () => {
+  const [messages, setMessages] = useState([
+    { text: "Hi 👋 I can help plan your trip!", sender: "bot" },
+  ]);
+  const [input, setInput] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+
+    const userMessage = { text: input, sender: "user" };
+    setMessages([...messages, userMessage]);
+
+    setInput("");
+
+    const res = await fetch("http://localhost:5000/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: input }),
+    });
+
+    const data = await res.json();
+
+    const botMessage = { text: data.reply, sender: "bot" };
+    setMessages((prev) => [...prev, botMessage]);
+  };
+
+  return (
+    <>
+      {/* 💬 Floating Button */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="fixed bottom-6 right-6 bg-indigo-600 text-white px-4 py-3 rounded-full shadow-lg"
+      >
+        💬
+      </button>
+
+      {/* 🪟 Chat Window */}
+      {open && (
+        <div className="fixed bottom-20 right-6 w-80 bg-white rounded-xl shadow-xl p-4">
+          <div className="h-60 overflow-y-auto mb-3">
+            {messages.map((msg, i) => (
+              <div
+                key={i}
+                className={`mb-2 ${
+                  msg.sender === "user" ? "text-right" : "text-left"
+                }`}
+              >
+                <span
+                  className={`px-3 py-2 rounded-lg inline-block ${
+                    msg.sender === "user"
+                      ? "bg-indigo-600 text-white"
+                      : "bg-gray-200"
+                  }`}
+                >
+                  {msg.text}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex gap-2">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              className="border p-2 flex-1 rounded-lg"
+              placeholder="Ask about trips..."
+            />
+            <button
+              onClick={sendMessage}
+              className="bg-indigo-600 text-white px-3 rounded-lg"
+            >
+              Send
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default ChatBot;
