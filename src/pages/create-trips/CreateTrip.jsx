@@ -332,8 +332,8 @@ const getPlacePhoto = async (place) => {
             </DialogHeader>
           </DialogContent>
         </Dialog>
+     <ChatBot />
       </div>
     </>
-    <ChatBot />
   );
 };
