@@ -1,18 +1,23 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
-import { Hero } from "./components/dashboard/Hero";
-import { Navbar } from "./components/common/Navbar";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import Landing from "./pages/Landing";
+import { CreateTrip } from "./pages/create-trips/CreateTrip";
+import { MyTrips } from "./pages/my-trips/MyTrips";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <Navbar />
-      <Hero />
-    </>
+    <Router>
+      <Routes>
+
+        {/* 🔥 NEW LANDING PAGE */}
+        <Route path="/" element={<Landing />} />
+
+        {/* EXISTING FEATURES */}
+        <Route path="/create-trip" element={<CreateTrip />} />
+        <Route path="/my-trips" element={<MyTrips />} />
+
+      </Routes>
+    </Router>
   );
 }
 
