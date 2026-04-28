@@ -41,7 +41,6 @@ const ChatBot = () => {
 
   return (
     <>
-      {/* 💬 Floating Button */}
       <button
         onClick={() => setOpen(!open)}
         className="fixed bottom-6 right-6 bg-indigo-600 text-white px-4 py-3 rounded-full shadow-lg hover:scale-105 transition"
@@ -49,12 +48,10 @@ const ChatBot = () => {
         💬
       </button>
 
-      {/* 🪟 Chat Window */}
       {open && (
         <div className="fixed bottom-20 right-6 w-80 bg-white rounded-xl shadow-xl p-4 flex flex-col">
-          {/* Messages */}
           <div className="h-60 overflow-y-auto mb-3">
-            {messages.map((msg, i) => (   {/* ✅ Fixed line 1 */}
+            {messages.map((msg, i) => (
               <div
                 key={i}
                 className={`mb-2 ${
@@ -79,11 +76,10 @@ const ChatBot = () => {
             )}
           </div>
 
-          {/* Input */}
           <div className="flex gap-2">
             <input
               value={input}
-              onChange={(e) => setInput(e.target.value)}  {/* ✅ Fixed line 2 */}
+              onChange={(e) => setInput(e.target.value)}
               className="border p-2 flex-1 rounded-lg outline-none"
               placeholder="Ask about trips..."
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
