@@ -15,7 +15,7 @@ const ChatBot = () => {
     setInput("");
     setLoading(true);
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch("/api/chat.js", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
