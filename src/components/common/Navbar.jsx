@@ -82,7 +82,7 @@ export const Navbar = () => {
         <div
           onClick={toggleDarkMode}
           className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition ${
-            dark ? "bg-indigo-600" : "bg-gray-300"
+            dark ? "bg-indigo-600" : "bg-muted-300"
           }`}
         >
           <div
