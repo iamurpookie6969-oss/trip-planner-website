@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -12,7 +12,6 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { FcGoogle } from "react-icons/fc";
@@ -23,13 +22,35 @@ export const Navbar = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const [openDailog, setOpenDailog] = useState(false);
 
+  // 🌙 Dark Mode State
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "dark") {
+      document.documentElement.classList.add("dark");
+      setDark(true);
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    if (dark) {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    } else {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    }
+    setDark(!dark);
+  };
+
+  // 🔐 Google Login
   const handleLogin = useGoogleLogin({
     onSuccess: (response) => GetUserProfile(response),
     onError: (error) => console.log(error),
   });
 
   const GetUserProfile = (tokenInfo) => {
-    console.log(tokenInfo);
     axios
       .get(
         `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`,
@@ -41,20 +62,29 @@ export const Navbar = () => {
         }
       )
       .then((response) => {
-        console.log(response);
         localStorage.setItem("user", JSON.stringify(response.data));
         setOpenDailog(false);
         window.location.reload();
-        // generateTrip();
       });
   };
 
   return (
-    <div className="p-3 shadow-sm flex justify-between items-center px-5">
+    <div className="p-3 shadow-sm flex justify-between items-center px-5 bg-background text-foreground">
+      {/* Logo */}
       <Link to={"/"}>
         <img src="/mainlogo.png" className="w-28 md:w-40" />
       </Link>
-      <div>
+
+      {/* Right Section */}
+      <div className="flex items-center gap-3">
+        {/* 🌙 Dark Mode Toggle */}
+        <button
+          onClick={toggleDarkMode}
+          className="px-3 py-2 rounded-full bg-gray-200 dark:bg-gray-800 text-black dark:text-white transition"
+        >
+          {dark ? "☀️" : "🌙"}
+        </button>
+
         {user ? (
           <div className="flex justify-center items-center gap-1 md:gap-3">
             <Link to={"/create-trip"}>
@@ -62,11 +92,13 @@ export const Navbar = () => {
                 Create Trips
               </Button>
             </Link>
+
             <Link to={"/my-trips"}>
               <Button variant="outline" className="rounded-full">
                 My Trips
               </Button>
             </Link>
+
             <Popover>
               <PopoverTrigger>
                 <img
@@ -74,7 +106,8 @@ export const Navbar = () => {
                   className="rounded-full h-[35px] w-[35px]"
                 />
               </PopoverTrigger>
-              <PopoverContent className="w-48 hover:bg-gray-100 cursor-pointer">
+
+              <PopoverContent className="w-48 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
                 <h2
                   onClick={() => {
                     googleLogout();
@@ -88,20 +121,24 @@ export const Navbar = () => {
             </Popover>
           </div>
         ) : (
-          <Dialog>
+          <Dialog open={openDailog} onOpenChange={setOpenDailog}>
             <DialogTrigger asChild>
               <Button>Sign In</Button>
             </DialogTrigger>
-            <DialogContent>
+
+            <DialogContent className="bg-background text-foreground">
               <DialogHeader>
                 <DialogDescription>
                   <img src="/mainlogo.png" className="w-28 md:w-40" />
+
                   <h2 className="font-bold text-lg mt-7">
                     Sign In with Google
                   </h2>
-                  <p> Sign In to the App with Google authentication </p>
+
+                  <p>Sign in to the app with Google authentication</p>
+
                   <Button
-                    className="w-full mt-5 flex items-center gap-2 "
+                    className="w-full mt-5 flex items-center gap-2"
                     onClick={handleLogin}
                   >
                     <FcGoogle className="h-5 w-5" /> Sign In with Google
