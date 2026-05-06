@@ -32,7 +32,7 @@ export const MyTripCard = ({ item, index }) => {
           <h2 className="font-bold text-lg">
             {item?.userSelection?.location?.label}
           </h2>
-          <h2 className="text-sm text-gray-500">
+          <h2 className="text-sm text-muted-foreground-500">
             {item?.userSelection?.noOfDays} Days trip with
             {item?.userSelection?.budget} budget{" "}
           </h2>
