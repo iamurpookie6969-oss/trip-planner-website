@@ -5,7 +5,7 @@ import "./index.css";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import Landing from "./pages/Landing.jsx"; // ✅ ADD THIS
+import Landing from "./pages/Landing.jsx"; // ✅ IMPORTANT
 import { CreateTrip } from "./pages/create-trips/CreateTrip.jsx";
 import { ViewTrip } from "./pages/view-trips/ViewTrip.jsx";
 import { MyTrips } from "./pages/my-trips/MyTrips.jsx";
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Landing />, // ✅ FIXED
+        element: <Landing />, // ✅ MUST BE THIS
       },
       {
         path: "/create-trip",
