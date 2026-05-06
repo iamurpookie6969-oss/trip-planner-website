@@ -181,7 +181,7 @@ export const CreateTrip = () => {
                 setPlace(v);
                 handleInputChange("location", v);
               },
-              className: "text-black",
+              className: "text-foreground",
             }}
           />
         </div>
