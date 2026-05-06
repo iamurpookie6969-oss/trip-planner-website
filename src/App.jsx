@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { Navbar } from "./components/common/Navbar";
+import { Hero } from "./components/dashboard/Hero";
 
 function App() {
   return (
