@@ -86,7 +86,7 @@ export const Navbar = () => {
           }`}
         >
           <div
-            className={`bg-white w-5 h-5 rounded-full shadow-md transform transition ${
+            className={`bg-background w-5 h-5 rounded-full shadow-md transform transition ${
               dark ? "translate-x-6" : ""
             }`}
           />
