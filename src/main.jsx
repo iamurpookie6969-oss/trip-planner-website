@@ -16,11 +16,11 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />, // 👈 global wrapper
+    element: <App />,   // ✅ wrapper
     children: [
       {
         path: "/",
-        element: <CreateTrip />, // you can change to Landing later
+        element: <Hero />,   // or Landing
       },
       {
         path: "/create-trip",
