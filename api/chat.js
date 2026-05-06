@@ -33,10 +33,12 @@ export default async function handler(req, res) {
     return res.status(200).json({ reply: text });
 
   } catch (error) {
-    console.error("🔥 BACKEND ERROR:", error);
-    return res.status(500).json({
-      reply: "AI Error 😢",
-      error: error.message, // 👈 THIS WILL HELP DEBUG
-    });
-  }
+  console.error("🔥 FULL ERROR:", error);
+
+  return res.status(500).json({
+    reply: "AI Error 😢",
+    error: error.message,
+    stack: error.stack, // 👈 add this
+  });
+}
 }
