@@ -1,3 +1,5 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
 export default async function handler(req, res) {
   try {
     const { message } = req.body;
@@ -6,35 +8,19 @@ export default async function handler(req, res) {
       return res.status(400).json({ reply: "No message provided" });
     }
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: message }],
-            },
-          ],
-        }),
-      }
-    );
+    const genAI = new GoogleGenerativeAI(process.env.VITE_GEMINI_API_KEY);
 
-    const data = await response.json();
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
+    });
 
-    console.log("Gemini response:", data);
+    const result = await model.generateContent(message);
+    const response = await result.response;
+    const text = response.text();
 
-    const reply =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "No response from AI";
-
-    res.status(200).json({ reply });
+    res.status(200).json({ reply: text });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ reply: "Error from AI" });
+    console.error(error);
+    res.status(500).json({ reply: "AI Error 😢" });
   }
 }
-
