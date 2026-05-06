@@ -34,7 +34,7 @@ export const PlaceCardItem = ({ place }) => {
         />
         <div>
           <h2 className="font-bold text-lg">{place.PlaceName}</h2>
-          <p className="text-sm text-gray-600">{place.PlaceDetails}</p>
+          <p className="text-sm text-muted-foreground-600">{place.PlaceDetails}</p>
           <h2 className="mt-2">🕗 {place.TimeTravel}</h2>
           {/* <Button> <FaMapLocationDot /></Button> */}
         </div>
