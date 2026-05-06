@@ -4,9 +4,14 @@ import { Hero } from "./components/dashboard/Hero";
 
 function App() {
   return (
-    <div className="min-h-screen w-full bg-background text-foreground transition-colors duration-300">
+    <div className="bg-background text-foreground min-h-screen">
       <Navbar />
+
+      {/* If using routing layout */}
       <Outlet />
+
+      {/* OR if homepage */}
+      {/* <Hero /> */}
     </div>
   );
 }
