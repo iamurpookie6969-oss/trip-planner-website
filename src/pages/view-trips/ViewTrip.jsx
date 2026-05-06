@@ -1,5 +1,4 @@
 import { Footer } from "@/components/common/Footer";
-import { Navbar } from "@/components/common/Navbar";
 import { HotelSection } from "@/components/view-trip/HotelSection";
 import { InfoSection } from "@/components/view-trip/InfoSection";
 import { VisitSection } from "@/components/view-trip/VisitSection";
@@ -54,8 +53,7 @@ export const ViewTrip = () => {
 
   return (
     <div className="bg-background text-foreground min-h-screen">
-      <Navbar />
-
+      
       {/* 🖼️ Destination Banner */}
       <div className="p-6 md:px-20 lg:px-44 xl:px-56">
         {locationPhoto ? (
