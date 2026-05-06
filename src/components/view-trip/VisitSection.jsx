@@ -3,36 +3,42 @@ import React from "react";
 export const VisitSection = ({ trip }) => {
   if (!trip?.plans || trip.plans.length === 0)
     return (
-      <div className="mt-10 text-gray-500 text-center">
+      <div className="mt-10 text-muted-foreground text-center">
         No itinerary found.
       </div>
     );
 
   return (
     <div className="mt-10">
-      <h2 className="text-2xl font-bold mb-4">📍 Places to Visit</h2>
+      <h2 className="text-2xl font-bold mb-4 text-foreground">
+        📍 Places to Visit
+      </h2>
+
       <div className="space-y-4">
         {trip.plans.map((plan, index) => {
-          // 🧠 Handle structured JSON objects (AI output)
+          // 🧠 Handle structured JSON objects
           if (typeof plan === "object" && plan !== null) {
             return (
               <div
                 key={index}
-                className="border p-4 rounded-lg shadow-sm hover:shadow-md transition"
+                className="bg-card text-card-foreground border border-border p-4 rounded-lg shadow-sm hover:shadow-md transition"
               >
                 <h3 className="font-semibold mb-1">
                   {plan.day || `Day ${index + 1}`}
                 </h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
+
+                <p className="text-muted-foreground text-sm leading-relaxed">
                   🏞️ {plan.activities || plan.itinerary || "No activities listed."}
                 </p>
+
                 {plan.theme && (
-                  <p className="text-gray-500 text-xs mt-1">
+                  <p className="text-muted-foreground text-xs mt-1">
                     🎨 Theme: {plan.theme}
                   </p>
                 )}
+
                 {plan.bestTimeToVisit && (
-                  <p className="text-gray-500 text-xs">
+                  <p className="text-muted-foreground text-xs">
                     🕒 Best Time: {plan.bestTimeToVisit}
                   </p>
                 )}
@@ -40,14 +46,17 @@ export const VisitSection = ({ trip }) => {
             );
           }
 
-          // 🧾 Handle plain text plans
+          // 🧾 Plain text plans
           return (
             <div
               key={index}
-              className="border p-4 rounded-lg shadow-sm hover:shadow-md transition"
+              className="bg-card text-card-foreground border border-border p-4 rounded-lg shadow-sm hover:shadow-md transition"
             >
               <h3 className="font-semibold mb-1">Day {index + 1}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">{plan}</p>
+
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                {plan}
+              </p>
             </div>
           );
         })}
