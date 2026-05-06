@@ -9,6 +9,7 @@ function App() {
 
       {/* If using routing layout */}
       <Outlet />
+      <Hero />
 
       {/* OR if homepage */}
       {/* <Hero /> */}
