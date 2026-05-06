@@ -1,5 +1,4 @@
 import ChatBot from "@/components/ChatBot";
-import { Navbar } from "@/components/common/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -38,7 +37,7 @@ export const CreateTrip = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Generate Image
+  // ✅ Get Image
   const getPlacePhoto = async (place) => {
     try {
       const photoRef = place?.value?.photos?.[0]?.photo_reference;
@@ -137,8 +136,7 @@ export const CreateTrip = () => {
     try {
       parsed = JSON.parse(tripData);
     } catch {
-      const lines = tripData.split("\n");
-      parsed.plans = lines;
+      parsed.plans = tripData.split("\n");
     }
 
     await setDoc(doc(db, "trips", docId), {
@@ -155,140 +153,130 @@ export const CreateTrip = () => {
   };
 
   return (
-    <>
-      <Navbar />
+    <div className="bg-background text-foreground min-h-screen sm:px-10 md:px-32 lg:px-56 xl:px-72 px-5 mt-10">
+      
+      <h2 className="font-bold text-3xl">
+        Tell us your travel preferences ⛱️ 🌴
+      </h2>
 
-      <div className="bg-background text-foreground min-h-screen sm:px-10 md:px-32 lg:px-56 xl:px-72 px-5 mt-10">
-        <h2 className="font-bold text-3xl">
-          Tell us your travel preferences ⛱️ 🌴
+      <p className="mt-3 text-muted-foreground text-lg">
+        Provide details and get a smart itinerary ✨
+      </p>
+
+      {/* LOCATION */}
+      <div className="mt-10">
+        <h2 className="text-xl font-medium mb-3">
+          Destination *
         </h2>
 
-        <p className="mt-3 text-muted-foreground text-lg">
-          Provide details and get a smart itinerary ✨
-        </p>
-
-        {/* LOCATION */}
-        <div className="mt-10">
-          <h2 className="text-xl font-medium mb-3">
-            Destination *
-          </h2>
-
-          <GooglePlacesAutocomplete
-            apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
-            selectProps={{
-              value: place,
-              onChange: (v) => {
-                setPlace(v);
-                handleInputChange("location", v);
-              },
-              className: "text-foreground",
-            }}
-          />
-        </div>
-
-        {/* DAYS */}
-        <div className="mt-6">
-          <h2 className="text-xl font-medium mb-3">
-            Days *
-          </h2>
-
-          <Input
-            type="number"
-            placeholder="Ex. 3"
-            className="bg-background border-border"
-            onChange={(e) =>
-              handleInputChange("noOfDays", e.target.value)
-            }
-          />
-        </div>
-
-        {/* BUDGET */}
-        <div className="mt-8">
-          <h2 className="text-xl font-medium mb-3">
-            Budget *
-          </h2>
-
-          <div className="grid grid-cols-3 gap-5">
-            {selectBudgetOptions.map((item, i) => (
-              <div
-                key={i}
-                onClick={() =>
-                  handleInputChange("budget", item.title)
-                }
-                className={`p-4 rounded-lg border border-border bg-card cursor-pointer transition ${
-                  formData.budget === item.title
-                    ? "border-primary shadow-lg"
-                    : ""
-                }`}
-              >
-                <h2 className="text-3xl">{item.icon}</h2>
-                <h2 className="font-bold">{item.title}</h2>
-                <p className="text-sm text-muted-foreground">
-                  {item.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* TRAVELLER */}
-        <div className="mt-8">
-          <h2 className="text-xl font-medium mb-3">
-            Traveller *
-          </h2>
-
-          <div className="grid grid-cols-3 gap-5">
-            {SelectTravelsList.map((item, i) => (
-              <div
-                key={i}
-                onClick={() =>
-                  handleInputChange("traveller", item.people)
-                }
-                className={`p-4 rounded-lg border border-border bg-card cursor-pointer ${
-                  formData.traveller === item.people
-                    ? "border-primary shadow-lg"
-                    : ""
-                }`}
-              >
-                <h2 className="text-3xl">{item.icon}</h2>
-                <h2 className="font-bold">{item.title}</h2>
-                <p className="text-sm text-muted-foreground">
-                  {item.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* BUTTON */}
-        <div className="flex justify-center mt-10">
-          <Button onClick={generateTrip} disabled={loading}>
-            {loading ? <Loading /> : "Generate Trip"}
-          </Button>
-        </div>
-
-        {/* LOGIN */}
-        <Dialog open={openDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogDescription>
-                <h2 className="text-center font-bold text-lg">
-                  Login Required
-                </h2>
-
-                <Button
-                  onClick={handleLogin}
-                  className="w-full mt-5"
-                >
-                  <FcGoogle /> Sign in with Google
-                </Button>
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-
-        <ChatBot />
+        <GooglePlacesAutocomplete
+          apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
+          selectProps={{
+            value: place,
+            onChange: (v) => {
+              setPlace(v);
+              handleInputChange("location", v);
+            },
+          }}
+        />
       </div>
-    </>
+
+      {/* DAYS */}
+      <div className="mt-6">
+        <h2 className="text-xl font-medium mb-3">Days *</h2>
+
+        <Input
+          type="number"
+          placeholder="Ex. 3"
+          className="bg-background border-border"
+          onChange={(e) =>
+            handleInputChange("noOfDays", e.target.value)
+          }
+        />
+      </div>
+
+      {/* BUDGET */}
+      <div className="mt-8">
+        <h2 className="text-xl font-medium mb-3">Budget *</h2>
+
+        <div className="grid grid-cols-3 gap-5">
+          {selectBudgetOptions.map((item, i) => (
+            <div
+              key={i}
+              onClick={() =>
+                handleInputChange("budget", item.title)
+              }
+              className={`p-4 rounded-lg border border-border bg-card cursor-pointer transition ${
+                formData.budget === item.title
+                  ? "border-primary shadow-lg"
+                  : ""
+              }`}
+            >
+              <h2 className="text-3xl">{item.icon}</h2>
+              <h2 className="font-bold">{item.title}</h2>
+              <p className="text-sm text-muted-foreground">
+                {item.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* TRAVELLER */}
+      <div className="mt-8">
+        <h2 className="text-xl font-medium mb-3">Traveller *</h2>
+
+        <div className="grid grid-cols-3 gap-5">
+          {SelectTravelsList.map((item, i) => (
+            <div
+              key={i}
+              onClick={() =>
+                handleInputChange("traveller", item.people)
+              }
+              className={`p-4 rounded-lg border border-border bg-card cursor-pointer ${
+                formData.traveller === item.people
+                  ? "border-primary shadow-lg"
+                  : ""
+              }`}
+            >
+              <h2 className="text-3xl">{item.icon}</h2>
+              <h2 className="font-bold">{item.title}</h2>
+              <p className="text-sm text-muted-foreground">
+                {item.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* BUTTON */}
+      <div className="flex justify-center mt-10">
+        <Button onClick={generateTrip} disabled={loading}>
+          {loading ? <Loading /> : "Generate Trip"}
+        </Button>
+      </div>
+
+      {/* LOGIN */}
+      <Dialog open={openDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogDescription>
+              <h2 className="text-center font-bold text-lg">
+                Login Required
+              </h2>
+
+              <Button
+                onClick={handleLogin}
+                className="w-full mt-5"
+              >
+                <FcGoogle /> Sign in with Google
+              </Button>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
+      <ChatBot />
+    </div>
   );
 };
