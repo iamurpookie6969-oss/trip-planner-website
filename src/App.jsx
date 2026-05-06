@@ -3,7 +3,7 @@ import { Navbar } from "./components/common/Navbar";
 
 function App() {
   return (
-    <div className="bg-background text-foreground min-h-screen transition-colors duration-300">
+    <div className="min-h-screen w-full bg-background text-foreground transition-colors duration-300">
       <Navbar />
       <Outlet />
     </div>
