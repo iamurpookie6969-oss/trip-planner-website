@@ -5,6 +5,7 @@ import "./index.css";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
+import Landing from "./pages/Landing.jsx"; // ✅ ADD THIS
 import { CreateTrip } from "./pages/create-trips/CreateTrip.jsx";
 import { ViewTrip } from "./pages/view-trips/ViewTrip.jsx";
 import { MyTrips } from "./pages/my-trips/MyTrips.jsx";
@@ -12,15 +13,14 @@ import { MyTrips } from "./pages/my-trips/MyTrips.jsx";
 import { Toaster } from "./components/ui/sonner.jsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
-// ✅ Router with global layout (IMPORTANT for dark mode)
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,   // ✅ wrapper
+    element: <App />,
     children: [
       {
         path: "/",
-        element: <Hero />,   // or Landing
+        element: <Landing />, // ✅ FIXED
       },
       {
         path: "/create-trip",
