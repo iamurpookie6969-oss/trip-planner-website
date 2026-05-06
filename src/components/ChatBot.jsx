@@ -70,7 +70,7 @@ const ChatBot = () => {
               </div>
             ))}
             {loading && (
-              <div className="text-left text-sm text-gray-500">
+              <div className="text-left text-sm text-muted-foreground-500">
                 Typing...
               </div>
             )}
