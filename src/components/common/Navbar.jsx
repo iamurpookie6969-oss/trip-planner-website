@@ -57,7 +57,6 @@ export const Navbar = () => {
         {
           headers: {
             Authorization: `Bearer ${tokenInfo?.access_token}`,
-            Accept: "Application/json",
           },
         }
       )
@@ -70,23 +69,32 @@ export const Navbar = () => {
 
   return (
     <div className="p-3 shadow-sm flex justify-between items-center px-5 bg-background text-foreground">
+      
       {/* Logo */}
       <Link to={"/"}>
         <img src="/mainlogo.png" className="w-28 md:w-40" />
       </Link>
 
       {/* Right Section */}
-      <div className="flex items-center gap-3">
-        {/* 🌙 Dark Mode Toggle */}
-        <button
-          onClick={toggleDarkMode}
-          className="px-3 py-2 rounded-full bg-gray-200 dark:bg-gray-800 text-black dark:text-white transition"
-        >
-          {dark ? "☀️" : "🌙"}
-        </button>
+      <div className="flex items-center gap-4">
 
+        {/* 🌙 TOGGLE SWITCH */}
+        <div
+          onClick={toggleDarkMode}
+          className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition ${
+            dark ? "bg-indigo-600" : "bg-gray-300"
+          }`}
+        >
+          <div
+            className={`bg-white w-5 h-5 rounded-full shadow-md transform transition ${
+              dark ? "translate-x-6" : ""
+            }`}
+          />
+        </div>
+
+        {/* USER / AUTH */}
         {user ? (
-          <div className="flex justify-center items-center gap-1 md:gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <Link to={"/create-trip"}>
               <Button variant="outline" className="rounded-full">
                 Create Trips
@@ -103,11 +111,11 @@ export const Navbar = () => {
               <PopoverTrigger>
                 <img
                   src={user?.picture}
-                  className="rounded-full h-[35px] w-[35px]"
+                  className="rounded-full h-[35px] w-[35px] cursor-pointer"
                 />
               </PopoverTrigger>
 
-              <PopoverContent className="w-48 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+              <PopoverContent className="w-40 cursor-pointer">
                 <h2
                   onClick={() => {
                     googleLogout();
@@ -135,13 +143,14 @@ export const Navbar = () => {
                     Sign In with Google
                   </h2>
 
-                  <p>Sign in to the app with Google authentication</p>
+                  <p>Sign in to continue</p>
 
                   <Button
                     className="w-full mt-5 flex items-center gap-2"
                     onClick={handleLogin}
                   >
-                    <FcGoogle className="h-5 w-5" /> Sign In with Google
+                    <FcGoogle className="h-5 w-5" />
+                    Sign In with Google
                   </Button>
                 </DialogDescription>
               </DialogHeader>
