@@ -1,3 +1,5 @@
+import { Hero } from "../components/dashboard/Hero";
+
 export default function Landing() {
-  return <h1 style={{ textAlign: "center" }}>Landing Works ✅</h1>;
+  return <Hero />;
 }
