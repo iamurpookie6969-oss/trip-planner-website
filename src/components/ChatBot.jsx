@@ -49,7 +49,7 @@ const ChatBot = () => {
       </button>
 
       {open && (
-        <div className="fixed bottom-20 right-6 w-80 bg-white rounded-xl shadow-xl p-4 flex flex-col">
+        <div className="fixed bottom-20 right-6 w-80 bg-background rounded-xl shadow-xl p-4 flex flex-col">
           <div className="h-60 overflow-y-auto mb-3">
             {messages.map((msg, i) => (
               <div
