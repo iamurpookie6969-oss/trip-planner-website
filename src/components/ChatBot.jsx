@@ -62,7 +62,7 @@ const ChatBot = () => {
                   className={`px-3 py-2 rounded-lg inline-block ${
                     msg.sender === "user"
                       ? "bg-indigo-600 text-white"
-                      : "bg-gray-200"
+                      : "bg-muted-200"
                   }`}
                 >
                   {msg.text}
