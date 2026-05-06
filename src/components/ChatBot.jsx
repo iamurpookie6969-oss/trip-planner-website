@@ -10,10 +10,12 @@ const ChatBot = () => {
 
   const sendMessage = async () => {
     if (!input.trim()) return;
+
     const userMessage = { text: input, sender: "user" };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
+
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -22,11 +24,14 @@ const ChatBot = () => {
         },
         body: JSON.stringify({ message: userMessage.text }),
       });
+
       const data = await res.json();
+
       const botMessage = {
         text: data?.reply || "No response from AI",
         sender: "bot",
       };
+
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("Chatbot error:", error);
@@ -49,7 +54,7 @@ const ChatBot = () => {
       </button>
 
       {open && (
-        <div className="fixed bottom-20 right-6 w-80 bg-background rounded-xl shadow-xl p-4 flex flex-col">
+        <div className="fixed bottom-20 right-6 w-80 bg-background border border-border rounded-xl shadow-xl p-4 flex flex-col">
           <div className="h-60 overflow-y-auto mb-3">
             {messages.map((msg, i) => (
               <div
@@ -62,15 +67,16 @@ const ChatBot = () => {
                   className={`px-3 py-2 rounded-lg inline-block ${
                     msg.sender === "user"
                       ? "bg-indigo-600 text-white"
-                      : "bg-muted-200"
+                      : "bg-muted text-foreground"
                   }`}
                 >
                   {msg.text}
                 </span>
               </div>
             ))}
+
             {loading && (
-              <div className="text-left text-sm text-muted-foreground-500">
+              <div className="text-left text-sm text-muted-foreground">
                 Typing...
               </div>
             )}
@@ -80,7 +86,7 @@ const ChatBot = () => {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="border p-2 flex-1 rounded-lg outline-none"
+              className="border border-border bg-background text-foreground p-2 flex-1 rounded-lg outline-none"
               placeholder="Ask about trips..."
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             />
