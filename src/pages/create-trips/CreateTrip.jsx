@@ -170,15 +170,36 @@ export const CreateTrip = () => {
         </h2>
 
         <GooglePlacesAutocomplete
-          apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
-          selectProps={{
-            value: place,
-            onChange: (v) => {
-              setPlace(v);
-              handleInputChange("location", v);
-            },
-          }}
-        />
+  apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
+  selectProps={{
+    value: place,
+    onChange: (v) => {
+      setPlace(v);
+      handleInputChange("location", v);
+    },
+    styles: {
+      control: (base) => ({
+        ...base,
+        backgroundColor: "transparent",
+        borderColor: "hsl(var(--border))",
+        color: "hsl(var(--foreground))",
+      }),
+      menu: (base) => ({
+        ...base,
+        backgroundColor: "hsl(var(--background))",
+        color: "hsl(var(--foreground))",
+      }),
+      singleValue: (base) => ({
+        ...base,
+        color: "hsl(var(--foreground))",
+      }),
+      input: (base) => ({
+        ...base,
+        color: "hsl(var(--foreground))",
+      }),
+    },
+  }}
+/>
       </div>
 
       {/* DAYS */}
