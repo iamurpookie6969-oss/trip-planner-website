@@ -14,7 +14,6 @@ export const ViewTrip = () => {
   const [tripData, setTripData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch trip data from Firestore
   const getTripData = async () => {
     try {
       const docRef = doc(db, "trips", tripId);
@@ -39,14 +38,14 @@ export const ViewTrip = () => {
 
   if (loading)
     return (
-      <div className="flex justify-center items-center h-[60vh] text-lg text-gray-500">
+      <div className="flex justify-center items-center h-[60vh] text-lg text-muted-foreground">
         Loading trip details...
       </div>
     );
 
   if (!tripData)
     return (
-      <div className="flex justify-center items-center h-[60vh] text-lg text-gray-500">
+      <div className="flex justify-center items-center h-[60vh] text-lg text-muted-foreground">
         No trip found.
       </div>
     );
@@ -54,7 +53,7 @@ export const ViewTrip = () => {
   const { userSelection, tripData: tripDetails, locationPhoto } = tripData;
 
   return (
-    <div>
+    <div className="bg-background text-foreground min-h-screen">
       <Navbar />
 
       {/* 🖼️ Destination Banner */}
@@ -63,10 +62,10 @@ export const ViewTrip = () => {
           <img
             src={locationPhoto}
             alt={userSelection?.location?.label || "Destination"}
-            className="w-full h-[300px] object-cover rounded-xl shadow-md"
+            className="w-full h-[300px] object-cover rounded-xl border border-border shadow-sm"
           />
         ) : (
-          <div className="w-full h-[300px] bg-gray-200 rounded-xl flex items-center justify-center text-gray-400">
+          <div className="w-full h-[300px] bg-muted rounded-xl flex items-center justify-center text-muted-foreground">
             No Image Available
           </div>
         )}
