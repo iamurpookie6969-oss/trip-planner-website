@@ -32,7 +32,7 @@ export const HotelCard = ({ item, index }) => {
         />
         <div className="my-2 flex flex-col gap-2">
           <h2 className="font-medium">{item?.HotelName}</h2>
-          <h2 className="text-xs text-gray-500">📍 {item?.HotelAddress}</h2>
+          <h2 className="text-xs text-muted-foreground-500">📍 {item?.HotelAddress}</h2>
           <h2 className="text-sm">💰 {item?.Price}</h2>
           <h2 className="text-sm">⭐ {item?.Rating}</h2>
         </div>
